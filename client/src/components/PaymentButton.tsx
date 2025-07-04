@@ -2,77 +2,95 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { motion } from "framer-motion";
+import { CreditCard, Loader2 } from "lucide-react";
 import Image from "next/image";
 
 interface PaymentButtonProps {
   orderId: string;
-  total: number;
+  amount: number;
 }
 
-export function PaymentButton({ orderId, total }: PaymentButtonProps) {
+export function PaymentButton({ orderId, amount }: PaymentButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [showQR, setShowQR] = useState(false);
-  const [qrImage, setQrImage] = useState<string | null>(null);
 
   const handlePayment = async () => {
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/payment/create`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/payment/qpay`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ orderId }),
+          body: JSON.stringify({
+            orderId,
+            amount,
+          }),
         }
       );
 
-      const data = await response.json();
-      if (data.success) {
-        setQrImage(data.qrImage);
-        setShowQR(true);
+      if (!response.ok) {
+        throw new Error("Payment initiation failed");
       }
+
+      const data = await response.json();
+      window.location.href = data.qpayUrl;
     } catch (error) {
       console.error("Payment error:", error);
+      alert("Payment failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <Button onClick={handlePayment} disabled={isLoading} className="w-full">
-        {isLoading ? "Processing..." : `Pay ₮${total.toLocaleString()}`}
-      </Button>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full max-w-sm mx-auto"
+    >
+      <div className="bg-white rounded-xl border p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="font-medium text-gray-900">Total Amount</h3>
+            <p className="text-2xl font-bold text-orange-500">
+              ₮{amount.toLocaleString()}
+            </p>
+          </div>
+          <Image
+            src="/qpay-logo.svg"
+            alt="QPay"
+            width={80}
+            height={40}
+            className="object-contain"
+          />
+        </div>
 
-      <Dialog open={showQR} onOpenChange={setShowQR}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Scan with QPay</DialogTitle>
-          </DialogHeader>
-          {qrImage && (
-            <div className="flex flex-col items-center gap-4">
-              <Image
-                src={qrImage}
-                alt="QPay QR Code"
-                width={300}
-                height={300}
-                className="rounded-lg"
-              />
-              <p className="text-sm text-muted-foreground">
-                Open QPay app and scan this QR code to pay
-              </p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
+        <div className="space-y-2">
+          <Button
+            onClick={handlePayment}
+            disabled={isLoading}
+            className="w-full bg-blue-500 hover:bg-blue-600 h-12 text-lg"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <CreditCard className="mr-2 h-5 w-5" />
+                Pay with QPay
+              </>
+            )}
+          </Button>
+          <p className="text-xs text-center text-gray-500">
+            You will be redirected to QPay to complete your payment
+          </p>
+        </div>
+      </div>
+    </motion.div>
   );
 }

@@ -1,54 +1,107 @@
-import { FoodItem } from "@/types";
+"use client";
+
+import { use } from "react";
+import { useState } from "react";
 import { FoodCard } from "@/components/FoodCard";
 import { Cart } from "@/components/Cart";
 import { CartProvider } from "@/context/CartContext";
+import { useFoods } from "@/hooks/useFoods";
+import { FoodCardSkeletonGrid } from "@/components/FoodCardSkeleton";
+import { motion, AnimatePresence } from "framer-motion";
+import { Food } from "@/types";
 
-async function getFoodItems(): Promise<FoodItem[]> {
-  const res = await fetch(`${process.env.API_URL}/api/food`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch food items");
-  }
-
-  return res.json();
+interface TableData {
+  id: string;
+  name: string;
+  seats: number;
 }
 
-export default async function MenuPage({
-  params: { tableId },
-}: {
-  params: { tableId: string };
-}) {
-  const foods = await getFoodItems();
+type TablesRecord = Record<string, TableData>;
 
-  // Group foods by category
-  const foodsByCategory = foods.reduce((acc, food) => {
-    if (!acc[food.category]) {
-      acc[food.category] = [];
-    }
-    acc[food.category].push(food);
-    return acc;
-  }, {} as Record<string, FoodItem[]>);
+// Mock data for demo
+const MOCK_TABLES: TablesRecord = {
+  "1": { id: "1", name: "Table 1", seats: 4 },
+  "2": { id: "2", name: "Table 2", seats: 2 },
+  "3": { id: "3", name: "Table 3", seats: 6 },
+  "4": { id: "4", name: "Table 4", seats: 8 },
+};
+
+const categories = ["All", "Main", "Side", "Dessert", "Drink"];
+
+export default function OrderPage({ params }: { params: { tableId: string } }) {
+  // Use React.use() to unwrap params
+  const { tableId } = use(Promise.resolve(params));
+
+  // Validate table exists (for demo)
+  if (!MOCK_TABLES[tableId]) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Table Not Found
+          </h1>
+          <p className="text-gray-500">The requested table does not exist.</p>
+        </div>
+      </div>
+    );
+  }
+
+  const { data: foods, isLoading } = useFoods();
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const filteredFoods = foods?.filter(
+    (food: Food) =>
+      selectedCategory === "All" || food.category === selectedCategory
+  );
 
   return (
     <CartProvider>
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Table {tableId} - Menu</h1>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">
+            {MOCK_TABLES[tableId].name}
+          </h1>
+          <p className="text-gray-500">{MOCK_TABLES[tableId].seats} Seats</p>
+        </div>
 
-        {Object.entries(foodsByCategory).map(([category, foods]) => (
-          <section key={category} className="mb-12">
-            <h2 className="text-2xl font-semibold mb-6">{category}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {foods.map((food) => (
-                <FoodCard key={food._id} food={food} />
+        <div className="flex flex-wrap gap-2 mb-6">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategory === category
+                  ? "bg-orange-500 text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        {isLoading ? (
+          <FoodCardSkeletonGrid />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <AnimatePresence>
+              {filteredFoods?.map((food: Food) => (
+                <motion.div
+                  key={food._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <FoodCard food={food} />
+                </motion.div>
               ))}
-            </div>
-          </section>
-        ))}
+            </AnimatePresence>
+          </div>
+        )}
 
         <Cart tableId={tableId} />
-      </main>
+      </div>
     </CartProvider>
   );
 }

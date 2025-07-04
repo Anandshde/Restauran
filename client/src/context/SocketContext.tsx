@@ -18,7 +18,9 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    const socketInstance = io(process.env.NEXT_PUBLIC_API_URL!);
+    const socketInstance = io(process.env.NEXT_PUBLIC_API_URL || "", {
+      transports: ["websocket"],
+    });
 
     socketInstance.on("connect", () => {
       setIsConnected(true);
@@ -31,7 +33,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     setSocket(socketInstance);
 
     return () => {
-      socketInstance.close();
+      socketInstance.disconnect();
     };
   }, []);
 
@@ -42,4 +44,10 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error("useSocket must be used within a SocketProvider");
+  }
+  return context.socket;
+};

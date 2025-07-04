@@ -1,16 +1,15 @@
 import useSWR from "swr";
+import type { Food } from "@/types";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const fetcher = (url: string) => fetch(API_URL + url).then((res) => res.json());
 
 export function useFoods() {
-  const { data, error, isLoading, mutate } = useSWR(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/food`,
-    fetcher
-  );
+  const { data, error, mutate } = useSWR<Food[]>("/api/food", fetcher);
 
   return {
-    foods: data,
-    isLoading,
+    data,
+    isLoading: !error && !data,
     error,
     mutate,
   };

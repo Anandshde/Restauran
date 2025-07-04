@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="40" cy="40" r="38" fill="#FF6B35" />
+  
+  <!-- Plate -->
+  <circle cx="40" cy="40" r="30" fill="white" stroke="#2EC4B6" stroke-width="2" />
+  
+  <!-- Fork -->
+  <path d="M30 25V55M26 25V35M34 25V35" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" />
+  
+  <!-- Knife -->
+  <path d="M50 25C50 25 46 35 46 40C46 45 50 55 50 55M44 25C44 25 48 35 48 40C48 45 44 55 44 55" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" />
+</svg> 
