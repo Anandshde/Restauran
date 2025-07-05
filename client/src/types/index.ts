@@ -45,3 +45,7 @@ export interface Table {
   createdAt: string;
   updatedAt: string;
 }
+
+// Aliases for legacy imports
+export type IOrder = Order;
+export type FoodItem = Food;
