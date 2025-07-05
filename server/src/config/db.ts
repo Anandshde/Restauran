@@ -5,6 +5,12 @@ dotenv.config();
 
 const connectDB = async (): Promise<void> => {
   try {
+    // In demo mode we run with in-memory mock data, no real DB.
+    if (process.env.APP_MODE === "demo") {
+      console.log("🛈 Demo mode – skipping MongoDB connection");
+      return;
+    }
+
     const mongoUri = process.env.MONGO_URI;
 
     if (!mongoUri) {
