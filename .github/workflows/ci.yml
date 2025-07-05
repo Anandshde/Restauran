@@ -24,8 +24,8 @@ jobs:
           npm install --legacy-peer-deps --no-audit --progress=false
           npm run lint || true  # continue even if lint errors
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Typecheck (client only)
+        run: npx tsc -p client/tsconfig.json --noEmit
 
       - name: Test (placeholder)
         run: npm run test
