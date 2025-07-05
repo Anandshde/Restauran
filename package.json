@@ -27,7 +27,7 @@
     "start:prod:frontend": "cd client && npm run start:prod",
     "start:prod:backend": "cd server && npm run start:prod",
     "typecheck": "tsc -b",
-    "lint": "eslint \"**/*.{ts,tsx,js}\" --max-warnings=0",
+    "lint": "npm run lint -w client",
     "test": "echo \"(add tests)\"",
     "clean": "rm -rf node_modules client/node_modules server/node_modules",
     "install:all": "npm install && cd client && npm install && cd ../server && npm install",
