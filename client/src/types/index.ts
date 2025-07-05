@@ -6,6 +6,9 @@ export interface Food {
   category: string;
   image?: string;
   status: "active" | "inactive";
+  isSpicy?: boolean;
+  prepTime?: number;
+  rating?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,8 +34,10 @@ export interface Order {
     quantity: number;
     name: string;
     price: number;
+    notes?: string;
   }[];
-  status: "pending" | "preparing" | "completed" | "cancelled";
+  status: "pending" | "preparing" | "served" | "completed" | "cancelled";
+  tableNumber?: number;
   totalAmount: number;
   createdAt: string;
   updatedAt: string;

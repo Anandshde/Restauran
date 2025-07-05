@@ -34,7 +34,7 @@ export function OrderCard({ order, onStatusUpdate }: OrderCardProps) {
   const Icon = statusIcons[order.status as keyof typeof statusIcons];
   const total = order.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const itemCount = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -65,7 +65,7 @@ export function OrderCard({ order, onStatusUpdate }: OrderCardProps) {
                 animate={{ opacity: 1, x: 0 }}
                 className="font-medium"
               >
-                Table {order.tableNumber}
+                Table {order.tableNumber ?? order.tableId}
               </motion.h3>
               <motion.div
                 initial={{ opacity: 0 }}
