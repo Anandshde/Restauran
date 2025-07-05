@@ -29,7 +29,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 app.use(express.json());
 
@@ -40,9 +40,13 @@ app.use("/api/order", orderRoutes);
 app.use("/api/table", tableRoutes);
 app.use("/api/payment", paymentRoutes);
 
-// Basic route for testing
+// Health check endpoints
 app.get("/", (req, res) => {
   res.send("Restaurant API is running");
+});
+
+app.get("/health", (req, res) => {
+  res.send("OK");
 });
 
 // Start server
