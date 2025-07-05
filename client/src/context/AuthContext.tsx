@@ -8,6 +8,7 @@ import {
   ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { isDemo } from "@/config/app.config";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -26,7 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
-    const isAuth = !!token;
+    const isAuth = !!token || isDemo();
     setIsAuthenticated(isAuth);
 
     if (!isAuth && pathname?.startsWith("/dashboard")) {

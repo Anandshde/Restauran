@@ -19,7 +19,7 @@ export interface SelectProps extends SelectPrimitive.SelectProps {
 }
 
 const Select = React.forwardRef<HTMLButtonElement, SelectProps>(
-  ({ options, placeholder, icon, className, ...props }, ref) => (
+  ({ options = [], placeholder, icon, className, ...props }, ref) => (
     <SelectPrimitive.Root {...props}>
       <SelectPrimitive.Trigger
         ref={ref}

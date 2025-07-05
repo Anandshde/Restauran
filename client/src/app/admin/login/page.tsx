@@ -1,17 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Lock, Mail, Loader2 } from "lucide-react";
+import { Lock, Mail, Loader2, Play } from "lucide-react";
 import Image from "next/image";
 
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const isDemo = process.env.NEXT_PUBLIC_APP_MODE === "demo";
+
+  // In demo mode, redirect to dashboard or show demo login
+  useEffect(() => {
+    if (isDemo) {
+      // Auto-redirect to dashboard in demo mode after 2 seconds
+      const timer = setTimeout(() => {
+        router.push("/dashboard/menu");
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDemo, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,6 +61,52 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
+
+  // Show demo message in demo mode
+  if (isDemo) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-6 text-center"
+        >
+          <div className="text-center">
+            <Image
+              src="/logo.svg"
+              alt="Logo"
+              width={120}
+              height={120}
+              className="mx-auto"
+            />
+            <h2 className="mt-4 text-2xl font-bold text-gray-900">
+              🎭 Demo Mode
+            </h2>
+            <p className="mt-2 text-gray-600">
+              No admin login required in demo mode
+            </p>
+          </div>
+
+          <div className="bg-blue-50 p-4 rounded-md">
+            <div className="flex items-center justify-center space-x-2 text-blue-600">
+              <Play className="h-5 w-5" />
+              <span className="font-medium">Redirecting to dashboard...</span>
+            </div>
+            <div className="mt-2 text-sm text-blue-500">
+              You'll be redirected automatically in 2 seconds
+            </div>
+          </div>
+
+          <Button
+            onClick={() => router.push("/dashboard/menu")}
+            className="w-full bg-blue-500 hover:bg-blue-600"
+          >
+            Go to Dashboard Now
+          </Button>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

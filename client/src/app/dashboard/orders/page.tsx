@@ -22,12 +22,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IOrder } from "@/types";
+import { Order } from "@/types";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
   preparing: "bg-blue-100 text-blue-800 border-blue-200",
   served: "bg-green-100 text-green-800 border-green-200",
+} as const;
+
+// Server returns a richer order object in production.
+// Demo data only includes a subset. Extend the base type with optionals to satisfy TS.
+type ExtendedOrder = Order & {
+  tableNumber?: number;
+  total?: number;
+  paid?: boolean;
+  barimt?: { billId: string };
 };
 
 export default function OrdersPage() {
@@ -56,9 +65,11 @@ export default function OrdersPage() {
     }
   };
 
-  const filteredOrders = orders?.filter((order: IOrder) => {
+  const filteredOrders = orders?.filter((order: ExtendedOrder) => {
     const matchesSearch =
-      order.tableNumber.toString().includes(searchQuery) ||
+      (order.tableNumber?.toString() || order.tableId || "").includes(
+        searchQuery
+      ) ||
       order.items.some((item) =>
         item.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -100,7 +111,11 @@ export default function OrdersPage() {
               className="pl-10"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={statusFilter}
+            onValueChange={setStatusFilter}
+            options={[]}
+          >
             <SelectTrigger className="w-40">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Filter by status" />
@@ -129,7 +144,7 @@ export default function OrdersPage() {
           </TableHeader>
           <TableBody>
             <AnimatePresence>
-              {filteredOrders?.map((order: IOrder) => (
+              {filteredOrders?.map((order: ExtendedOrder) => (
                 <motion.tr
                   key={order._id}
                   initial={{ opacity: 0, y: 20 }}
@@ -140,7 +155,7 @@ export default function OrdersPage() {
                 >
                   <TableCell>
                     <span className="font-medium">
-                      Table {order.tableNumber}
+                      Table {order.tableNumber ?? order.tableId ?? "-"}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -154,7 +169,7 @@ export default function OrdersPage() {
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">
-                      ₮{order.total.toLocaleString()}
+                      ₮{(order.total ?? order.totalAmount).toLocaleString()}
                     </span>
                   </TableCell>
                   <TableCell>

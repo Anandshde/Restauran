@@ -1,0 +1,54 @@
+{
+  "name": "restaurant-ordering-system",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack restaurant ordering system with demo and production versions",
+  "scripts": {
+    "dev": "npm run dev:prod",
+    "dev:all": "npm run dev:demo",
+    "dev:demo": "cross-env APP_MODE=demo NEXT_PUBLIC_APP_MODE=demo concurrently \"npm run dev:demo:frontend\" \"npm run dev:demo:backend\"",
+    "dev:prod": "cross-env APP_MODE=production NEXT_PUBLIC_APP_MODE=production concurrently \"npm run dev:prod:frontend\" \"npm run dev:prod:backend\"",
+    "dev:demo:frontend": "cd client && npm run dev:demo",
+    "dev:demo:backend": "cd server && npm run dev:demo",
+    "dev:prod:frontend": "cd client && npm run dev:prod",
+    "dev:prod:backend": "cd server && npm run dev:prod",
+    "build": "npm run build:prod",
+    "build:demo": "npm run build:demo:frontend && npm run build:demo:backend",
+    "build:prod": "npm run build:prod:frontend && npm run build:prod:backend",
+    "build:demo:frontend": "cd client && npm run build:demo",
+    "build:demo:backend": "cd server && npm run build",
+    "build:prod:frontend": "cd client && npm run build:prod",
+    "build:prod:backend": "cd server && npm run build",
+    "start": "npm run start:prod",
+    "start:demo": "concurrently \"npm run start:demo:frontend\" \"npm run start:demo:backend\"",
+    "start:prod": "concurrently \"npm run start:prod:frontend\" \"npm run start:prod:backend\"",
+    "start:demo:frontend": "cd client && npm run start:demo",
+    "start:demo:backend": "cd server && npm run start:demo",
+    "start:prod:frontend": "cd client && npm run start:prod",
+    "start:prod:backend": "cd server && npm run start:prod",
+    "typecheck": "tsc -b",
+    "lint": "eslint \"**/*.{ts,tsx,js}\" --max-warnings=0",
+    "test": "echo \"(add tests)\"",
+    "clean": "rm -rf node_modules client/node_modules server/node_modules",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.0.0",
+    "@storybook/react-vite": "^7.6.0",
+    "@storybook/addon-essentials": "^7.6.0",
+    "@storybook/addon-a11y": "^7.6.0",
+    "clsx": "^2.0.0",
+    "cross-env": "^7.0.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,json,md}": "prettier --write"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  }
+}

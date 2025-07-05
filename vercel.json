@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "name": "restaurant-client",
+  "builds": [
+    {
+      "src": "client/next.config.ts",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@api-url",
+    "NEXT_PUBLIC_APP_MODE": "production"
+  }
+}

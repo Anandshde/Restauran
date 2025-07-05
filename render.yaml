@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: restaurant-server
+    env: node
+    region: oregon
+    branch: main
+    rootDir: server
+    buildCommand: "npm install && npm run build:prod:backend"
+    startCommand: "npm run start:prod:backend"
+    healthCheckPath: /health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: APP_MODE
+        value: production

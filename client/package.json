@@ -1,12 +1,19 @@
 {
-  "name": "client",
+  "name": "restaurant-client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:demo": "cross-env NEXT_PUBLIC_APP_MODE=demo next dev -p 3100",
+    "dev:prod": "cross-env NEXT_PUBLIC_APP_MODE=production next dev -p 3200",
     "build": "next build",
+    "build:demo": "cross-env NEXT_PUBLIC_APP_MODE=demo next build",
+    "build:prod": "cross-env NEXT_PUBLIC_APP_MODE=production next build",
     "start": "next start",
-    "lint": "next lint"
+    "start:demo": "cross-env NEXT_PUBLIC_APP_MODE=demo next start -p 3100",
+    "start:prod": "cross-env NEXT_PUBLIC_APP_MODE=production next start -p 3200",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
