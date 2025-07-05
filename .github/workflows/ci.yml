@@ -18,11 +18,17 @@ jobs:
 
       - run: npm install
 
-      - name: Lint, Typecheck, Test
+      - name: Lint Frontend
         run: |
+          cd client
+          npm install --legacy-peer-deps --no-audit --progress=false
           npm run lint
-          npm run typecheck
-          npm run test
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test (placeholder)
+        run: npm run test
 
       - name: Build Client & Server
         run: |
